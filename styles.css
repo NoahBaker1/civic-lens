@@ -1,9 +1,66 @@
-/* CSS by ///ADD/// YOUR NAME */
+/* CSS by Noah Baker */
 
 /* Imported Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wdth,wght@0,18..144,87..112,300..900;1,18..144,87..112,300..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
 
 /* ///ADD/// CSS Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+img,
+picture,
+video,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: none;
+}
+
+h1, h2, h3, p, blockquote, li {
+  overflow-wrap: break-word;
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+}
+
+fieldset {
+  border: none;
+}
 
 
 /* Root Variables */
@@ -17,6 +74,12 @@
   --font-heading: 'Merriweather', serif;
   --shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
   --transition: all 0.5s ease;
+
+  /* theme-aware tokens - overridden by the interaction queries below */
+  --page-bg: var(--watchdog-white);
+  --page-fg: var(--truth-text);
+  --surface: #ffffff;
+  --border-color: rgba(29, 53, 87, 0.18);
 }
 
 /* Manual Light/Dark Mode Styles*/
@@ -39,27 +102,603 @@ body.dark-mode {
 }
 
 /* ///ADD/// Skip Link Styles */
+.skip-link {
+  position: absolute;
+  top: -10rem;
+  left: 0.5rem;
+  z-index: 100;
+  padding: 1rem 1.5rem;
+  background-color: var(--news-flash);
+  color: var(--watchdog-white);
+  font-family: var(--font-body);
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 0 0 0.5rem 0.5rem;
+  transition: var(--transition);
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
 
 /* ///ADD/// Navigation Styles */
 
+/* the checkbox stays in the DOM and in the tab order, but is not visible */
+.menu-checkbox {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.menu-button {
+  display: block;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--news-flash);
+  color: var(--watchdog-white);
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.menu-button::after {
+  content: " \25BE";
+  display: inline-block;
+  transition: var(--transition);
+}
+
+/* visible keyboard focus for the label, since the real checkbox is hidden */
+.menu-checkbox:focus-visible + .menu-button {
+  outline: 0.2rem solid var(--watchdog-white);
+  outline-offset: 0.2rem;
+}
+
+.menu {
+  max-height: 0;
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+/* fallback toggle - works in every browser, with or without :has() */
+.menu-checkbox:checked ~ .menu {
+  max-height: 25rem;
+  margin-top: 1rem;
+}
+
+.menu a {
+  display: block;
+  padding: 0.75rem 1rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(241, 250, 238, 0.25);
+  transition: var(--transition);
+}
+
 /* ///ADD/// Global Layout Styles */
+body {
+  background-color: var(--page-bg);
+  color: var(--page-fg);
+  font-family: var(--font-body);
+}
+
+header {
+  position: relative;
+  padding: 2rem 1rem 1.5rem 1rem;
+  background-color: var(--blue-bulletin);
+  color: var(--watchdog-white);
+  text-align: center;
+}
+
+header > * {
+  max-width: 1200px;
+  margin-inline: auto;
+}
+
+#theme-toggle svg path {
+  fill: var(--blue-bulletin);
+}
+
+main {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+main > section {
+  margin-bottom: 3rem;
+}
+
+#breaking-news,
+#featured-articles {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+#breaking-news h2,
+#featured-articles h2 {
+  grid-column: 1/-1;
+}
+
+.news-item video {
+  width: 100%;
+  height: auto;
+  margin-top: 1rem;
+  border-radius: 0.25rem;
+  box-shadow: var(--shadow);
+}
+
+.card {
+  padding: 1.25rem;
+  background-color: var(--surface);
+  border-left: 0.35rem solid var(--story-subtitle);
+  border-radius: 0.25rem;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+}
+
+/* ----- FORM LAYOUT ----- */
+form {
+  max-width: 40rem;
+  padding: 1.5rem;
+  background-color: var(--surface);
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow);
+}
+
+.field {
+  margin-bottom: 1.25rem;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+}
+
+.field input {
+  display: block;
+  width: 100%;
+  padding: 0.65rem;
+  background-color: var(--page-bg);
+  color: var(--page-fg);
+  border: 1px solid var(--border-color);
+  border-radius: 0.25rem;
+}
+
+legend {
+  padding-bottom: 0.5rem;
+  font-family: var(--font-heading);
+  font-weight: 700;
+}
+
+.checkbox-group {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.checkbox input {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--news-flash);
+}
+
+.submit-button {
+  display: block;
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 0.85rem;
+  background-color: var(--news-flash);
+  color: var(--watchdog-white);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+/* ----- FOOTER ----- */
+footer {
+  padding: 2.5rem 1rem 1.5rem 1rem;
+  background-color: var(--blue-bulletin);
+  color: var(--watchdog-white);
+  text-align: center;
+}
+
+footer > * {
+  max-width: 1200px;
+  margin-inline: auto;
+}
+
+.social-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.5rem;
+  margin-top: 1rem;
+}
+
+.social-list a {
+  display: block;
+  padding: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.copyright {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(241, 250, 238, 0.25);
+}
+
+/* ----- VISIBLE FOCUS FOR EVERY INTERACTIVE ELEMENT ----- */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+video:focus-visible {
+  outline: 0.2rem solid var(--news-flash);
+  outline-offset: 0.2rem;
+}
+
 
 /* ///ADD/// Global Text Styles */
+h1 {
+  font-family: var(--font-heading);
+  font-size: 2.25rem;
+  line-height: 1.1;
+  font-optical-sizing: auto;
+  font-weight: 900;
+  font-stretch: 112%;
+  font-variation-settings: 'opsz' 144, 'wdth' 112, 'wght' 900;
+}
+
+h2 {
+  font-family: var(--font-heading);
+  font-size: 1.65rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 0.2rem solid var(--news-flash);
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-variation-settings: 'opsz' 48, 'wdth' 100, 'wght' 700;
+}
+
+h3 {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  margin-bottom: 0.5rem;
+  color: var(--story-subtitle);
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-stretch: 95%;
+  font-variation-settings: 'opsz' 24, 'wdth' 95, 'wght' 600;
+}
+
+p {
+  max-width: 70ch;
+  font-variation-settings: 'wght' 400;
+}
+
+.tagline {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-optical-sizing: auto;
+  font-variation-settings: 'opsz' 18, 'wdth' 87, 'wght' 300;
+}
+
+header .tagline {
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 1.05rem;
+}
+
+blockquote.tagline {
+  max-width: 70ch;
+  margin: 1.5rem 0;
+  padding: 0.5rem 0 0.5rem 1.25rem;
+  border-left: 0.35rem solid var(--news-flash);
+  font-size: 1.25rem;
+}
+
+#welcome p {
+  margin-bottom: 1rem;
+}
+
+.news-item p,
+.card p {
+  font-variation-settings: 'wght' 350;
+}
 
 
 /* ///ADD/// medium styles 620px */
+@media screen and (min-width: 620px) {
+
+  /* ----- DESKTOP NAVIGATION ----- */
+  .menu-button,
+  .menu-checkbox {
+    display: none;
+  }
+
+  .menu {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1.5rem;
+    max-height: none;
+    overflow: visible;
+    margin-top: 0.5rem;
+  }
+
+  .menu a {
+    border-bottom: 0.2rem solid transparent;
+  }
+
+  /* ----- LAYOUT ----- */
+  h1 {
+    font-size: 3rem;
+  }
+
+  #breaking-news,
+  #featured-articles {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .checkbox-group {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .field {
+    display: grid;
+    grid-template-columns: 8rem 1fr;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .field label {
+    margin-bottom: 0;
+  }
+
+  .submit-button {
+    width: fit-content;
+    margin-left: auto;
+    padding-inline: 2.5rem;
+  }
+}
 
 
 /* ///ADD/// large styles 920px */
+@media screen and (min-width: 920px) {
+
+  h1 {
+    font-size: 3.75rem;
+    font-variation-settings: 'opsz' 144, 'wdth' 112, 'wght' 900;
+  }
+
+  h2 {
+    font-size: 2rem;
+  }
+
+  main {
+    padding: 2rem 1.5rem;
+  }
+
+  #featured-articles {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .checkbox-group {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  form {
+    max-width: 50rem;
+  }
+}
 
 
 /* ///ADD/// x-large styles 1024px */
+@media screen and (min-width: 1024px) {
+
+  header {
+    padding: 3rem 2rem 2rem 2rem;
+  }
+
+  #featured-articles {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  #breaking-news {
+    gap: 2.5rem;
+  }
+
+  .menu {
+    gap: 0.5rem 3rem;
+  }
+
+  .card {
+    padding: 1.5rem;
+  }
+
+  p {
+    font-size: 1.1rem;
+  }
+}
 
 
 /* ///ADD/// Interaction Queries for color scheme light and dark and motion preference */
+
+/* ----- HOVER (pointer devices only) ----- */
+@media (hover: hover) {
+
+  .menu a:hover {
+    color: var(--news-flash);
+    border-bottom-color: var(--news-flash);
+  }
+
+  .menu-button:hover,
+  .submit-button:hover {
+    background-color: var(--story-subtitle);
+  }
+
+  .card:hover {
+    border-left-color: var(--news-flash);
+    transform: translateY(-0.25rem);
+  }
+
+  .social-list a:hover {
+    color: var(--news-flash);
+  }
+
+  #theme-toggle:hover svg path {
+    fill: var(--news-flash);
+  }
+}
+
+/* ----- SYSTEM LIGHT MODE ----- */
+@media (prefers-color-scheme: light) {
+
+  body:not(.dark-mode) {
+    --page-bg: var(--watchdog-white);
+    --page-fg: var(--truth-text);
+    --surface: #ffffff;
+    --border-color: rgba(29, 53, 87, 0.18);
+  }
+}
+
+/* ----- SYSTEM DARK MODE ----- */
+@media (prefers-color-scheme: dark) {
+
+  body:not(.light-mode) {
+    --page-bg: var(--truth-text);
+    --page-fg: var(--watchdog-white);
+    --surface: #3f3f3f;
+    --border-color: rgba(241, 250, 238, 0.25);
+  }
+
+  body:not(.light-mode) h3 {
+    color: #8FB8D4;
+  }
+
+  body:not(.light-mode) #theme-toggle {
+    background-color: var(--truth-text);
+    border-color: var(--watchdog-white);
+  }
+
+  body:not(.light-mode) #theme-toggle svg path {
+    fill: var(--watchdog-white);
+  }
+}
+
+/* ----- MANUAL TOGGLE OVERRIDES -----
+   These come last on purpose. body.dark-mode and body:not(.light-mode)
+   have identical specificity, so source order is what lets the toggle
+   button win against the system preference. */
+body.light-mode {
+  --page-bg: var(--watchdog-white);
+  --page-fg: var(--truth-text);
+  --surface: #ffffff;
+  --border-color: rgba(29, 53, 87, 0.18);
+}
+
+body.light-mode h3 {
+  color: var(--story-subtitle);
+}
+
+body.light-mode #theme-toggle {
+  background-color: var(--watchdog-white);
+  border-color: var(--blue-bulletin);
+}
+
+body.light-mode #theme-toggle svg path {
+  fill: var(--blue-bulletin);
+}
+
+body.dark-mode {
+  --page-bg: var(--truth-text);
+  --page-fg: var(--watchdog-white);
+  --surface: #3f3f3f;
+  --border-color: rgba(241, 250, 238, 0.25);
+}
+
+body.dark-mode h3 {
+  color: #8FB8D4;
+}
+
+body.dark-mode #theme-toggle {
+  background-color: var(--truth-text);
+  border-color: var(--watchdog-white);
+}
+
+body.dark-mode #theme-toggle svg path {
+  fill: var(--watchdog-white);
+}
+
+/* ----- MOTION PREFERENCES ----- */
+@media (prefers-reduced-motion: no-preference) {
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .card:hover {
+    transform: none;
+  }
+}
 
 
 /* ///ADD///  Feature Query for :has() that checks if the #menu-toggle is checked */
 @supports (selector(:has(*))) {
 
+  /* :has() reaches UP to the parent, which the sibling combinator above cannot do */
+  .mobile-nav:has(#menu-toggle:checked) {
+    padding-bottom: 0.5rem;
+  }
+
+  .mobile-nav:has(#menu-toggle:checked) .menu-button {
+    background-color: var(--story-subtitle);
+  }
+
+  .mobile-nav:has(#menu-toggle:checked) .menu-button::after {
+    transform: rotate(180deg);
+  }
+
+  /* dim the page heading slightly while the mobile menu is open */
+  .mobile-nav:has(#menu-toggle:checked) ~ * {
+    opacity: 0.85;
+  }
 }
